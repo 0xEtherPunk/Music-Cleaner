@@ -1,0 +1,32 @@
+{
+	"geode": "5.11.2",
+	"gd": {
+		"win": "2.2081",
+		"android": "2.2081",
+		"mac": "2.2081",
+		"ios": "2.2081"
+	},
+	"id": "0xetherpunk.music-cleaner",
+	"name": "Music Cleaner",
+	"version": "v1.0.0",
+	"developer": "0xEtherPunk",
+	"description": "Manage and batch delete downloaded custom songs with favorites protection.",
+	"repository": "https://github.com/0xEtherPunk/Music-Cleaner",
+	"dependencies": {
+		"geode.node-ids": ">=v1.23.3"
+	},
+	"settings": {
+		"protect-active-songs": {
+			"name": "Protect Active Songs",
+			"description": "Prevent deletion of currently selected custom Menu and Practice songs.",
+			"type": "bool",
+			"default": true
+		},
+		"show-confirm-popup": {
+			"name": "Confirmation Dialog",
+			"description": "Require explicit confirmation before performing deletion operations.",
+			"type": "bool",
+			"default": true
+		}
+	}
+}
