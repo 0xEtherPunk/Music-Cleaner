@@ -75,17 +75,12 @@
 
 <h2 align="center" id="installation">Installation</h2>
 
-### Method 1: Via Geode In-Game (Recommended)
-1. Open Geometry Dash and click the **Geode** button on the main menu.
-2. Go to the **Download** tab and search for `Music Cleaner`.
-3. Click **View** and then **Install**.
-
-### Method 2: Manual Download (GitHub Releases)
+### Method 1: Manual Download (GitHub Releases)
 1. Download the latest `.geode` package from [Releases](https://github.com/0xEtherPunk/Music-Cleaner/releases).
 2. Place the downloaded file into your Geometry Dash `geode/mods/` folder.
 3. Restart Geometry Dash.
 
-### Method 3: Build from Source
+### Method 2: Build from Source
 **Requirements:** Geode CLI (`4.0.0+`), CMake (`3.25+`), Clang 19+, Geode SDK (`5.11.2+`).
 
 ```bash
