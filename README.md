@@ -2,7 +2,7 @@
 
 | Mod Icon | Saved Levels Access |
 |:---:|:---:|
-| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner**<br>Cache cleaner & favorites whitelist | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Quick Access Button**<br>Located in Saved Levels next to folders |
+| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner**<br>Batch cleaner & favorites whitelist | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Quick Access Button**<br>Located in Saved Levels next to folders |
 
 ### Downloaded Songs Interface
 
@@ -10,10 +10,10 @@
   <img src="song-browser.png" width="85%" alt="Downloaded Songs Browser">
 </p>
 
-- **Star Button (`★`):** Adds the track to your persistent whitelist, protecting it from both individual and batch deletion.
-- **Row Trash (`🗑`):** Deletes a single unstarred downloaded track. Aligned directly to the left of the star button.
-- **Delete All Button:** Batch purges all unstarred songs in a single action, calculating and reporting exact reclaimed disk space before confirmation.
-- **Info Button (`(i)`):** Small help dialog button positioned neatly below the bottom-left corner of the window frame.
+- **Star Button (`★`):** Marks a song as favorite, protecting it from both individual and batch deletion.
+- **Trash Button (`🗑`):** Deletes that specific song individually (only works on unstarred tracks).
+- **Red Cross Button (`❌`):** Located in the bottom-right corner. Deletes all unstarred songs at once after confirmation.
+- **Info Button (`(i)`):** Opens a quick help dialog showing usage rules and developer credits.
 
 ---
 
@@ -28,48 +28,31 @@
 
 ---
 
-A high-performance storage management utility for Geometry Dash built on the Geode mod loader. Music Cleaner provides one-click batch cleanup of downloaded custom songs while protecting favorited tracks via a persistent whitelist.
+**Music Cleaner** is a Geometry Dash mod (Geode) that lets you batch delete downloaded custom songs to reclaim disk space, while protecting your favorite tracks with a star whitelist.
 
-## Overview
+## How to Use
 
-Geometry Dash downloads custom audio files (from Newgrounds and the Music Library) directly to local storage. Over time, cached audio files accumulate and consume multiple gigabytes of disk space. Vanilla Geometry Dash provides no batch deletion mechanism, forcing players to delete tracks manually one by one.
-
-**Music Cleaner** resolves this limitation:
-1. **Persistent Whitelist Protection:** Star tracks to prevent them from being purged.
-2. **One-Click Batch Deletion:** Purge all non-favorited custom audio files in a single confirmed action.
-3. **Accidental Deletion Safeguards:** Starred tracks cannot be deleted from individual rows or batch operations until unstarred.
-4. **Filesystem Space Calculation:** Calculates and previews exact file count and storage space freed (MB/GB) before confirming.
-5. **Ergonomic UI Integration:** Clean row actions aligned directly beneath playback controls, plus quick access from Saved Levels.
-
-## Features
-
-- **Whitelist Protection:** Star toggle buttons allow marking any song as a favorite. Starred IDs are saved in persistent mod storage.
-- **Batch Cache Purging:** Removes all unstarred downloaded songs and immediately synchronizes `MusicDownloadManager` state and table views.
-- **Space Calculation:** Inspects local file metadata to report exact track counts and megabytes to be reclaimed prior to execution.
-- **Two-Step Confirmation:** Native alert dialog requiring explicit confirmation before deleting files.
-- **Menu Music Preservation:** Restores ambient menu music seamlessly when closing the song browser.
-- **Seamless UI Integration:**
-  - **Custom Song Browser:** Row trash button and star button aligned horizontally directly under the playback button.
-  - **Level View:** Compact star button placed beside the level download/delete action button.
-  - **Saved Levels:** Direct navigation button in the Saved Levels browser opening the custom songs browser.
-  - **Info Dialog:** Built-in information popup documenting core mechanics and developer credits.
+1. **Star songs you want to keep:** Click the star icon on any level page or in the song browser.
+2. **Open the song browser:** Go to Saved Levels and click the music button next to the folders button.
+3. **Delete all unstarred tracks:** Click the red cross button `(X)` in the bottom-right corner. A confirmation dialog will show the number of songs to delete, preserved favorites, and exact disk space to be freed (MB/GB).
+4. **Delete tracks individually:** Click the trash icon on any song row to delete only that track.
+5. **Accidental deletion protection:** Starred tracks cannot be deleted individually or in bulk until manually unstarred.
 
 ## Interface Integration
 
-The mod integrates directly into native Geometry Dash layers:
-- **Saved Levels (`LevelBrowserLayer`):** Music icon button in the action menu opening `GJSongBrowser`.
+- **Saved Levels (`LevelBrowserLayer`):** Quick access music button next to the folder button.
 - **Downloaded Songs Browser (`GJSongBrowser` & `CustomSongCell`):**
-  - Star button positioned directly under the playback button.
-  - Delete button positioned beside the star button on the same horizontal baseline.
-  - Header info button (`(i)`) below the bottom-left corner of the dialog frame.
-  - Delete All button executes batch purge of all unstarred tracks.
-- **Level Overview (`CustomSongWidget`):** Compact star button integrated into the level audio widget with safety checks against accidental deletion.
+  - Star button placed under the playback button.
+  - Trash button placed beside the star button on the same line for single-track deletion.
+  - Red cross button in the bottom-right corner for batch deletion of all unstarred songs.
+  - Info button `(i)` below the bottom-left corner of the dialog frame.
+- **Level Page (`CustomSongWidget`):** Star button next to the download/delete button to favorite songs directly from levels.
 
 ## In-Game Dialogs
 
 | Information & Help Dialog | Safe Batch Deletion Confirmation |
 |:---:|:---:|
-| <img src="info-popup.png" width="340" alt="Info Popup"><br>**Info & Credits Dialog**<br>Accessible via the `(i)` button below the song browser frame. Details favorite rules and author credits. | <img src="delete-confirm-popup.png" width="440" alt="Delete Confirmation Popup"><br>**Safe Confirmation Dialog**<br>Previews deleted songs count, preserved favorites count, and freed disk space before proceeding. |
+| <img src="info-popup.png" width="340" alt="Info Popup"><br>**Info & Credits Dialog**<br>Accessible via the `(i)` button below the song browser frame. | <img src="delete-confirm-popup.png" width="440" alt="Delete Confirmation Popup"><br>**Confirmation Dialog**<br>Shows songs to delete, kept favorites count, and exact space to be freed. |
 
 ## Project Structure
 

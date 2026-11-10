@@ -1,43 +1,42 @@
 {
-  "dependencies": {
-    "geode.node-ids": ">=v1.23.3"
+  "dependencies" : 
+  {
+    "geode.node-ids" : ">=v1.23.3"
   },
-  "description": "Batch delete downloaded custom songs with favorites whitelist protection.",
-  "developer": "0xEtherPunk",
-  "gd": {
-    "android": "2.2081",
-    "ios": "2.2081",
-    "mac": "2.2081",
-    "win": "2.2081"
+  "description" : "Batch delete downloaded custom songs with favorites whitelist protection.",
+  "developer" : "0xEtherPunk",
+  "gd" : 
+  {
+    "android" : "2.2081",
+    "ios" : "2.2081",
+    "mac" : "2.2081",
+    "win" : "2.2081"
   },
-  "geode": "5.11.2",
-  "id": "0xetherpunk.music-cleaner",
-  "name": "Music Cleaner",
-  "repository": "https://github.com/0xEtherPunk/Music-Cleaner",
-  "settings": {
-    "protect-active-songs": {
-      "default": true,
-      "description": "Prevent deletion of currently selected custom Menu and Practice songs.",
-      "name": "Protect Active Songs",
-      "type": "bool"
+  "geode" : "5.11.2",
+  "id" : "0xetherpunk.music-cleaner",
+  "name" : "Music Cleaner",
+  "repository" : "https://github.com/0xEtherPunk/Music-Cleaner",
+  "resources" : 
+  {
+    "sprites" : [ "resources/*.png" ]
+  },
+  "settings" : 
+  {
+    "protect-active-songs" : 
+    {
+      "default" : true,
+      "description" : "Prevent deletion of currently selected custom Menu and Practice songs.",
+      "name" : "Protect Active Songs",
+      "type" : "bool"
     },
-    "show-confirm-popup": {
-      "default": true,
-      "description": "Require explicit confirmation before performing deletion operations.",
-      "name": "Confirmation Dialog",
-      "type": "bool"
+    "show-confirm-popup" : 
+    {
+      "default" : true,
+      "description" : "Require explicit confirmation before performing deletion operations.",
+      "name" : "Confirmation Dialog",
+      "type" : "bool"
     }
   },
-  "tags": [
-    "music",
-    "online",
-    "utility",
-    "interface"
-  ],
-  "version": "v0.1.7",
-  "resources": {
-    "sprites": [
-      "resources/*.png"
-    ]
-  }
+  "tags" : [ "music", "online", "utility", "interface" ],
+  "version" : "v1.0.0"
 }
