@@ -8,7 +8,7 @@
 	},
 	"id": "0xetherpunk.music-cleaner",
 	"name": "Music Cleaner",
-	"version": "v1.0.0",
+	"version": "v0.1.0",
 	"developer": "0xEtherPunk",
 	"description": "Manage and batch delete downloaded custom songs with favorites protection.",
 	"repository": "https://github.com/0xEtherPunk/Music-Cleaner",

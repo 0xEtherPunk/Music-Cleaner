@@ -1,6 +1,6 @@
 # Music Cleaner
 
-A utility mod for Geometry Dash (Geode SDK) designed to manage local song cache storage and provide batch deletion with whitelist protection.
+A utility mod for Geometry Dash (Geode SDK) designed to manage local song cache storage and provide selective or batch deletion with whitelist protection.
 
 ## Overview
 
@@ -8,25 +8,33 @@ Geometry Dash stores downloaded Newgrounds and Music Library audio assets locall
 
 **Music Cleaner** addresses this limitation by introducing:
 1. A favorites whitelist system to protect selected tracks from deletion.
-2. A batch deletion mechanism that purges unstarred audio files while synchronizing game state with `MusicDownloadManager`.
-3. Quick access buttons in the main menu and the Saved Levels browser.
+2. Checkbox selection on each song entry for selective batch removal.
+3. Smart batch deletion: purging either selected tracks or all unstarred tracks.
+4. Quick access button in the Saved Levels browser opening the custom songs browser.
 
 ## Features
 
 - **Whitelist Protection:** Star songs to mark them as favorites. Favorited songs are stored in persistent mod storage and excluded from deletion routines.
-- **Batch Deletion:** Removes all downloaded `.mp3` and `.ogg` files that are not explicitly favorited.
-- **Active Track Safeguard:** Configurable protection for currently active custom Menu and Practice mode music (`GameManager::m_customMenuSongID` and `GameManager::m_customPracticeSongID`).
+- **Selective & Batch Deletion:**
+  - When $\ge 1$ checkboxes are selected: clicking the delete-all button purges only the marked tracks (excluding favorites).
+  - When 0 checkboxes are selected: clicking the delete-all button purges all downloaded custom tracks except favorites.
+- **Accidental Deletion Safeguards:** Favorited songs cannot be deleted via the row trash button or batch delete unless first unstarred.
 - **Disk Space Calculation:** Queries filesystem metrics to report exact file counts and reclaimed disk space prior to execution.
-- **Confirmation Flow:** Two-step verification before irreversible deletion operations.
-- **Deletion Safeguard:** Direct song deletion on level pages is intercepted for favorited songs to prevent accidental removal.
+- **Two-Step Confirmation:** Native alert dialogs displaying file counts and freed storage before proceeding with file deletion.
+- **Seamless UI Integration:**
+  - Row controls: Checkbox, Star button, and Trash button arranged side-by-side.
+  - Level view: Compact star toggle on the level song widget.
+  - Navigation: Quick-access button in the Saved Levels browser.
 
 ## Interface Integration
 
-The mod adds navigation shortcuts to standard game layers:
-- **Main Menu (`MenuLayer`):** Music icon button on the bottom bar, positioned adjacent to the Geode button.
-- **Saved Levels Browser (`LevelBrowserLayer`):** Music icon button adjacent to the folder navigation controls.
-- **Song Browser (`SongsLayer`):** "Clean All" action button on the top-right header.
-- **Song Widget (`CustomSongWidget`):** Star toggle button placed beside playback controls across all song cell instances.
+The mod integrates directly into standard game layers:
+- **Saved Levels Browser (`LevelBrowserLayer`):** Music icon button adjacent to the folder navigation controls, opening the custom songs browser (`GJSongBrowser`).
+- **Custom Song Browser (`GJSongBrowser` & `CustomSongCell`):**
+  - Left of each row's trash button: favorite star toggle (`GJ_starBtn_001.png` / `GJ_starBtn2_001.png`).
+  - Left of the star toggle: multi-select checkbox (`GJ_checkOn_001.png` / `GJ_checkOff_001.png`).
+  - Header delete-all button: initiates smart deletion based on active checkbox state.
+- **Song Widget (`CustomSongWidget`):** Compact star toggle button placed beside playback controls on level overview pages.
 
 ## Project Structure
 
@@ -43,44 +51,31 @@ Music-Cleaner/
     ├── main.cpp                   # Mod entrypoint and lifecycle events
     ├── MusicCleaner.hpp           # Core storage and calculation logic
     ├── MusicCleaner.cpp
-    ├── MusicCleanerPopup.hpp      # Cleanup interface and confirmation dialog
-    ├── MusicCleanerPopup.cpp
     └── hooks/
-        ├── MenuLayerHook.cpp          # Main menu entrypoint
-        ├── LevelBrowserLayerHook.cpp  # Saved levels browser entrypoint
-        ├── SongsLayerHook.cpp         # Saved songs layer integration
-        └── CustomSongWidgetHook.cpp   # Song cell star button and deletion guard
+        ├── CustomSongCellHook.cpp     # Track row checkbox and star controls
+        ├── CustomSongWidgetHook.cpp   # Level view compact star toggle
+        ├── GJSongBrowserHook.cpp      # Smart batch deletion logic
+        └── LevelBrowserLayerHook.cpp  # Saved levels browser entrypoint
 ```
 
 ## Building
 
 ### Requirements
-- **Geode SDK:** v5.11.2 or later
-- **CMake:** 3.25 or later
-- **Clang:** 19.0+ (with `lld`)
-- **Geode CLI:** v4.0.0 or later
+- Geode CLI (`geode-cli`)
+- CMake 3.25+
+- Clang 19+ (or MSVC / GCC according to platform target)
+- Geode SDK v5.11.2+
 
-### Local Build (Linux -> Windows x64 via Geode CLI)
-Ensure `clang-20` and `lld-20` are installed:
+### Compilation
 ```bash
-sudo apt install clang-20 lld-20 llvm-20
-```
-
-Compile the mod package:
-```bash
-export CLANG_VER=20 LLVM_VER=20
 geode build -p windows
 ```
 
-The resulting package `0xetherpunk.music-cleaner.geode` is placed into the active profile's `geode/mods/` directory.
-
-### Continuous Integration
-The repository includes a GitHub Actions workflow (`.github/workflows/multi-platform.yml`) that automatically compiles release packages across Windows, macOS, Android (arm64/armv7), and iOS upon push.
-
-## Authors
-
-- **Developer:** 0xEtherPunk (GitHub: [@0xEtherPunk](https://github.com/0xEtherPunk))
-- **Geometry Dash:** 0xPSP
+### Installation
+Copy the generated `.geode` package from your build directory into the Geometry Dash `geode/mods/` directory:
+```bash
+cp build-win/0xetherpunk.music-cleaner.geode "$STEAM_GD/geode/mods/"
+```
 
 ## License
 

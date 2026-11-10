@@ -1,7 +1,8 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/LevelBrowserLayer.hpp>
-#include <Geode/binding/SongsLayer.hpp>
+#include <Geode/binding/GJSongBrowser.hpp>
 #include <Geode/binding/GJSearchObject.hpp>
+#include "../MusicCleaner.hpp"
 
 using namespace geode::prelude;
 
@@ -9,20 +10,21 @@ class $modify(MCLevelBrowserLayer, LevelBrowserLayer) {
     bool init(GJSearchObject* searchObj) {
         if (!LevelBrowserLayer::init(searchObj)) return false;
 
-        // Add button when viewing Saved Levels
+        // Add music management button when viewing Saved Levels
         if (searchObj && (searchObj->m_searchType == SearchType::SavedLevels || searchObj->m_searchType == SearchType::FavouriteLevels)) {
             auto spr = CCSprite::createWithSpriteFrameName("GJ_musicLibraryBtn_001.png");
             if (!spr) {
                 spr = CCSprite::createWithSpriteFrameName("GJ_musicOnBtn_001.png");
             }
-            if (spr) spr->setScale(0.8f);
+            if (spr) {
+                spr->setScale(0.8f);
+            }
 
             auto btn = CCMenuItemSpriteExtra::create(
                 spr, this, menu_selector(MCLevelBrowserLayer::onOpenMusicList)
             );
             btn->setID("music-cleaner-saved-btn"_spr);
 
-            // In LevelBrowserLayer, place next to m_folderBtn if available
             if (m_folderBtn && m_folderBtn->getParent()) {
                 auto menu = static_cast<CCMenu*>(m_folderBtn->getParent());
                 menu->addChild(btn);
@@ -48,11 +50,12 @@ class $modify(MCLevelBrowserLayer, LevelBrowserLayer) {
     }
 
     void onOpenMusicList(CCObject* sender) {
-        auto songsLayer = SongsLayer::create();
-        if (songsLayer) {
+        MusicCleaner::clearSelection();
+        auto browser = GJSongBrowser::create();
+        if (browser) {
             auto scene = CCDirector::sharedDirector()->getRunningScene();
-            scene->addChild(songsLayer);
-            songsLayer->showLayer(false);
+            scene->addChild(browser, 100);
+            browser->showLayer(false);
         }
     }
 };

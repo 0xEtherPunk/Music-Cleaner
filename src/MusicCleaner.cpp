@@ -1,6 +1,5 @@
 #include "MusicCleaner.hpp"
 #include <Geode/binding/MusicDownloadManager.hpp>
-#include <Geode/binding/GameManager.hpp>
 #include <Geode/binding/SongInfoObject.hpp>
 #include <filesystem>
 #include <iomanip>
@@ -9,7 +8,16 @@
 using namespace geode::prelude;
 
 std::unordered_set<int> MusicCleaner::s_favorites;
+std::unordered_set<int> MusicCleaner::s_selected;
 bool MusicCleaner::s_loaded = false;
+
+static std::filesystem::path toPath(const gd::string& str) {
+#ifdef GEODE_IS_WINDOWS
+    return std::filesystem::path(geode::utils::string::utf8ToWide(str.c_str()));
+#else
+    return std::filesystem::path(str.c_str());
+#endif
+}
 
 void MusicCleaner::init() {
     if (!s_loaded) {
@@ -40,6 +48,7 @@ void MusicCleaner::setFavorite(int songID, bool favorite) {
     init();
     if (favorite) {
         s_favorites.insert(songID);
+        s_selected.erase(songID);
     } else {
         s_favorites.erase(songID);
     }
@@ -50,13 +59,6 @@ bool MusicCleaner::toggleFavorite(int songID) {
     init();
     bool newState = !isFavorite(songID);
     setFavorite(songID, newState);
-
-    if (newState) {
-        Notification::create("Added to Favorites", NotificationIcon::Success)->show();
-    } else {
-        Notification::create("Removed from Favorites", NotificationIcon::Info)->show();
-    }
-
     return newState;
 }
 
@@ -68,6 +70,134 @@ const std::unordered_set<int>& MusicCleaner::getFavorites() {
 size_t MusicCleaner::getFavoritesCount() {
     init();
     return s_favorites.size();
+}
+
+bool MusicCleaner::isSelected(int songID) {
+    return s_selected.contains(songID);
+}
+
+void MusicCleaner::setSelected(int songID, bool selected) {
+    if (selected) {
+        if (!isFavorite(songID)) {
+            s_selected.insert(songID);
+        }
+    } else {
+        s_selected.erase(songID);
+    }
+}
+
+bool MusicCleaner::toggleSelected(int songID) {
+    if (isFavorite(songID)) {
+        s_selected.erase(songID);
+        return false;
+    }
+    bool newState = !isSelected(songID);
+    setSelected(songID, newState);
+    return newState;
+}
+
+void MusicCleaner::clearSelection() {
+    s_selected.clear();
+}
+
+size_t MusicCleaner::getSelectedCount() {
+    return s_selected.size();
+}
+
+const std::unordered_set<int>& MusicCleaner::getSelected() {
+    return s_selected;
+}
+
+uintmax_t MusicCleaner::getSongFileSize(int songID) {
+    auto mdm = MusicDownloadManager::sharedState();
+    if (!mdm || songID <= 0) return 0;
+
+    gd::string songPath = mdm->pathForSong(songID);
+    std::error_code ec;
+    auto fsPath = toPath(songPath);
+    if (std::filesystem::exists(fsPath, ec)) {
+        auto sz = std::filesystem::file_size(fsPath, ec);
+        return ec ? 0 : sz;
+    }
+    return 0;
+}
+
+bool MusicCleaner::deleteSingleSong(int songID, uintmax_t* outFreedBytes) {
+    auto mdm = MusicDownloadManager::sharedState();
+    if (!mdm || songID <= 0) return false;
+
+    gd::string songPath = mdm->pathForSong(songID);
+    std::error_code ec;
+    auto fsPath = toPath(songPath);
+
+    uintmax_t sz = 0;
+    if (std::filesystem::exists(fsPath, ec)) {
+        sz = std::filesystem::file_size(fsPath, ec);
+        if (ec) sz = 0;
+        std::filesystem::remove(fsPath, ec);
+    }
+
+    if (outFreedBytes) {
+        *outFreedBytes = sz;
+    }
+
+    mdm->clearSong(songID);
+    s_selected.erase(songID);
+    return true;
+}
+
+size_t MusicCleaner::deleteSongs(const std::vector<int>& songIDs, uintmax_t* outFreedBytes) {
+    uintmax_t totalFreed = 0;
+    size_t count = 0;
+
+    for (int id : songIDs) {
+        if (isFavorite(id)) continue;
+        uintmax_t freed = 0;
+        if (deleteSingleSong(id, &freed)) {
+            totalFreed += freed;
+            count++;
+        }
+    }
+
+    if (outFreedBytes) {
+        *outFreedBytes = totalFreed;
+    }
+
+    return count;
+}
+
+size_t MusicCleaner::deleteSelectedSongs(uintmax_t* outFreedBytes) {
+    std::vector<int> toDelete;
+    toDelete.reserve(s_selected.size());
+    for (int id : s_selected) {
+        if (!isFavorite(id)) {
+            toDelete.push_back(id);
+        }
+    }
+    size_t count = deleteSongs(toDelete, outFreedBytes);
+    s_selected.clear();
+    return count;
+}
+
+size_t MusicCleaner::deleteAllUnstarredSongs(uintmax_t* outFreedBytes) {
+    auto mdm = MusicDownloadManager::sharedState();
+    if (!mdm) return 0;
+    auto downloaded = mdm->getDownloadedSongs();
+    if (!downloaded) return 0;
+
+    std::vector<int> toDelete;
+    for (int i = 0; i < downloaded->count(); ++i) {
+        auto song = static_cast<SongInfoObject*>(downloaded->objectAtIndex(i));
+        if (!song) continue;
+        int id = song->m_songID;
+        if (!isFavorite(id)) {
+            toDelete.push_back(id);
+        }
+    }
+
+    size_t count = deleteSongs(toDelete, outFreedBytes);
+    s_selected.clear();
+    return count;
 }
 
 std::string MusicCleaner::formatBytes(uintmax_t bytes) {
@@ -88,102 +218,4 @@ std::string MusicCleaner::formatBytes(uintmax_t bytes) {
     }
 
     return ss.str();
-}
-
-SongStats MusicCleaner::calculateStats(bool protectActive) {
-    init();
-    SongStats stats;
-
-    auto mdm = MusicDownloadManager::sharedState();
-    if (!mdm) return stats;
-
-    auto gm = GameManager::sharedState();
-    int menuSongID = gm ? gm->m_customMenuSongID : 0;
-    int practiceSongID = gm ? gm->m_customPracticeSongID : 0;
-
-    auto downloaded = mdm->getDownloadedSongs();
-    if (!downloaded) return stats;
-
-    for (int i = 0; i < downloaded->count(); ++i) {
-        auto song = static_cast<SongInfoObject*>(downloaded->objectAtIndex(i));
-        if (!song) continue;
-
-        stats.totalSongs++;
-
-        int id = song->m_songID;
-        gd::string songPath = mdm->pathForSong(id);
-
-        uintmax_t fileSize = 0;
-        std::error_code ec;
-        auto fsPath = geode::utils::file::stringToPath(songPath);
-        if (std::filesystem::exists(fsPath, ec)) {
-            fileSize = std::filesystem::file_size(fsPath, ec);
-            if (ec) fileSize = 0;
-        }
-
-        stats.totalBytes += fileSize;
-
-        if (isFavorite(id)) {
-            stats.favoriteSongs++;
-        } else if (protectActive && (id == menuSongID || id == practiceSongID)) {
-            stats.activeProtectedSongs++;
-        } else {
-            stats.songsToDelete++;
-            stats.bytesToFree += fileSize;
-        }
-    }
-
-    return stats;
-}
-
-size_t MusicCleaner::executeCleanup(bool protectActive, uintmax_t* outFreedBytes) {
-    init();
-
-    auto mdm = MusicDownloadManager::sharedState();
-    if (!mdm) return 0;
-
-    auto gm = GameManager::sharedState();
-    int menuSongID = gm ? gm->m_customMenuSongID : 0;
-    int practiceSongID = gm ? gm->m_customPracticeSongID : 0;
-
-    auto downloaded = mdm->getDownloadedSongs();
-    if (!downloaded) return 0;
-
-    std::vector<int> toDelete;
-    uintmax_t freedBytes = 0;
-
-    for (int i = 0; i < downloaded->count(); ++i) {
-        auto song = static_cast<SongInfoObject*>(downloaded->objectAtIndex(i));
-        if (!song) continue;
-
-        int id = song->m_songID;
-
-        if (isFavorite(id)) continue;
-
-        if (protectActive && (id == menuSongID || id == practiceSongID)) {
-            continue;
-        }
-
-        toDelete.push_back(id);
-    }
-
-    for (int id : toDelete) {
-        gd::string songPath = mdm->pathForSong(id);
-        std::error_code ec;
-        auto fsPath = geode::utils::file::stringToPath(songPath);
-
-        if (std::filesystem::exists(fsPath, ec)) {
-            auto sz = std::filesystem::file_size(fsPath, ec);
-            if (!ec) freedBytes += sz;
-            std::filesystem::remove(fsPath, ec);
-        }
-
-        mdm->clearSong(id);
-    }
-
-    if (outFreedBytes) {
-        *outFreedBytes = freedBytes;
-    }
-
-    return toDelete.size();
 }

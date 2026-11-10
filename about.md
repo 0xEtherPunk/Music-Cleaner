@@ -1,20 +1,22 @@
 # Music Cleaner
 
-A storage management utility for Geometry Dash that facilitates batch deletion of downloaded custom music while preserving user-selected favorites.
+A storage management utility for Geometry Dash (Geode SDK) designed to manage custom music downloads with selective checkbox purging and persistent favorites protection.
 
 ## Key Features
 
-- **Favorite Songs Whitelist:** Mark any downloaded song as a favorite. Favorited tracks are exempt from batch deletion.
-- **Batch Cache Purging:** Remove all non-favorited downloaded audio files (`.mp3` and `.ogg`) in a single operation.
-- **Active Track Safeguards:** Option to automatically protect currently configured custom Menu and Practice tracks from deletion.
-- **Storage Metrics:** Displays real-time counts and disk space calculations (MB/GB) before confirmation.
-- **Direct Navigation:** Dedicated buttons added to the Main Menu and Saved Levels browser to quickly access the song management view.
+- **Favorites Whitelist:** Star songs directly in the level widget or custom song browser. Favorited tracks are persistently saved and protected from deletion.
+- **Smart Batch Deletion:**
+  - With checkboxes marked: deletes only the selected tracks (excluding any favorited).
+  - With zero checkboxes marked: deletes all downloaded custom tracks except favorites.
+- **Per-Row Controls:** Each track row in the custom song browser features a selection checkbox, a favorite star toggle, and an individual delete button.
+- **Accidental Deletion Protection:** Favorited tracks are guarded against both individual and batch deletion.
+- **Storage Metrics:** Displays exact track count and disk space calculations (MB/GB) in confirmation dialogs before execution.
+- **Saved Levels Integration:** Direct navigation button in the Saved Levels browser to quickly open the custom songs manager.
 
 ## Access Points
 
-1. **Main Menu:** Bottom panel, beside the Geode launcher button.
-2. **Saved Levels:** Navigation panel, beside the folder button.
-3. **Saved Songs View:** "Clean All" button on the top-right corner.
-4. **Song Cells:** Star toggle button integrated directly into the audio widget.
+1. **Saved Levels:** Navigation panel, beside the folder button.
+2. **Custom Song Browser:** Standard custom song browser with per-row selection checkboxes, star toggles, and guarded delete actions.
+3. **Level Page:** Compact star toggle integrated into the song audio widget.
 
 Developer: 0xEtherPunk (GD: 0xPSP)

@@ -12,6 +12,12 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
     void updateSongInfo() {
         CustomSongWidget::updateSongInfo();
 
+        // CustomSongWidget is also used inside CustomSongCell where m_songDelegate is set.
+        // Cell layout is handled independently by CustomSongCellHook.
+        if (m_songDelegate != nullptr) {
+            return;
+        }
+
         if (m_customSongID <= 0 || m_isRobtopSong || !m_buttonMenu) {
             if (m_fields->m_starBtn) {
                 m_fields->m_starBtn->setVisible(false);
@@ -27,7 +33,9 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
             if (!spr) {
                 spr = CCSprite::createWithSpriteFrameName("GJ_likeBtn_001.png");
             }
-            spr->setScale(0.65f);
+            if (spr) {
+                spr->setScale(0.45f);
+            }
 
             m_fields->m_starBtn = CCMenuItemSpriteExtra::create(
                 spr, this, menu_selector(MCCustomSongWidget::onStarClicked)
@@ -36,10 +44,10 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
 
             if (m_deleteBtn) {
                 auto delPos = m_deleteBtn->getPosition();
-                m_fields->m_starBtn->setPosition({ delPos.x - 30.f, delPos.y });
+                m_fields->m_starBtn->setPosition({ delPos.x - 26.f, delPos.y });
             } else if (m_playbackBtn) {
                 auto playPos = m_playbackBtn->getPosition();
-                m_fields->m_starBtn->setPosition({ playPos.x + 35.f, playPos.y });
+                m_fields->m_starBtn->setPosition({ playPos.x + 30.f, playPos.y });
             } else {
                 m_fields->m_starBtn->setPosition({ 140.f, 0.f });
             }
@@ -49,7 +57,7 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
             m_fields->m_starBtn->setVisible(true);
             auto newSpr = CCSprite::createWithSpriteFrameName(sprName);
             if (newSpr) {
-                newSpr->setScale(0.65f);
+                newSpr->setScale(0.45f);
                 m_fields->m_starBtn->setSprite(newSpr);
             }
         }
@@ -64,7 +72,7 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
         if (m_fields->m_starBtn) {
             auto spr = CCSprite::createWithSpriteFrameName(sprName);
             if (spr) {
-                spr->setScale(0.65f);
+                spr->setScale(0.45f);
                 m_fields->m_starBtn->setSprite(spr);
             }
         }
@@ -75,7 +83,7 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
             FLAlertLayer::create(
                 "Protected Song",
                 "This song is marked as a <cy>Favorite</c>.\n"
-                "Remove it from favorites before deleting.",
+                "Unstar it before deleting.",
                 "OK"
             )->show();
             return;
