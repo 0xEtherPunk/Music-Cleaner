@@ -1,4 +1,15 @@
+<div align="center">
+
 # Music Cleaner
+
+<p align="center">
+  <a href="#how-to-use">How to Use</a> &nbsp;•&nbsp;
+  <a href="#interface-integration">Interface Integration</a> &nbsp;•&nbsp;
+  <a href="#in-game-dialogs">In-Game Dialogs</a> &nbsp;•&nbsp;
+  <a href="#installation">Installation</a> &nbsp;•&nbsp;
+  <a href="#project-structure">Project Structure</a> &nbsp;•&nbsp;
+  <a href="#license">License</a>
+</p>
 
 | Mod Icon | Quick Access Button |
 |:---:|:---:|
@@ -10,6 +21,8 @@
   <img src="song-browser.png" width="85%" alt="Downloaded Songs Browser">
 </p>
 
+</div>
+
 - **Star Button (`★`):** Marks a song as favorite, protecting it from both individual and batch deletion.
 - **Trash Button (`🗑`):** Deletes that specific song individually (only works on unstarred tracks).
 - **Red Cross Button (`❌`):** Located in the bottom-right corner. Deletes all unstarred songs at once after confirmation.
@@ -17,8 +30,10 @@
 
 ---
 
+<div align="center">
+
 | Parameter | Specification |
-|:---|:---|
+|:---:|:---:|
 | **Author** | [0xEtherPunk](https://github.com/0xEtherPunk) |
 | **Geometry Dash** | `0xPSP` |
 | **Repository** | [Music-Cleaner](https://github.com/0xEtherPunk/Music-Cleaner) |
@@ -26,11 +41,15 @@
 | **Tags** | `Music`, `Online`, `Utility`, `Interface` |
 | **Compatibility** | Geode SDK v5.11.2 (Geometry Dash 2.2081) |
 
----
+<br>
 
 **Music Cleaner** is a Geometry Dash mod (Geode) that lets you batch delete downloaded custom songs to reclaim disk space, while protecting your favorite tracks with a star whitelist.
 
-## How to Use
+</div>
+
+---
+
+<h2 align="center" id="how-to-use">How to Use</h2>
 
 1. **Star songs you want to keep:** Click the star icon on any level page or in the song browser.
 2. **Open the song browser:** Go to Saved Levels and click the music button next to the folders button.
@@ -38,7 +57,7 @@
 4. **Delete tracks individually:** Click the trash icon on any song row to delete only that track.
 5. **Accidental deletion protection:** Starred tracks cannot be deleted individually or in bulk until manually unstarred.
 
-## Interface Integration
+<h2 align="center" id="interface-integration">Interface Integration</h2>
 
 - **Saved Levels (`LevelBrowserLayer`):** Quick access music button next to the folder button.
 - **Downloaded Songs Browser (`GJSongBrowser` & `CustomSongCell`):**
@@ -48,13 +67,17 @@
   - Info button `(i)` below the bottom-left corner of the dialog frame.
 - **Level Page (`CustomSongWidget`):** Star button next to the download/delete button to favorite songs directly from levels.
 
-## In-Game Dialogs
+<h2 align="center" id="in-game-dialogs">In-Game Dialogs</h2>
+
+<div align="center">
 
 | Information & Help Dialog | Safe Batch Deletion Confirmation |
 |:---:|:---:|
 | <img src="info-popup.png" width="340" alt="Info Popup"><br>**Info & Credits Dialog**<br>Accessible via the `(i)` button below the song browser frame. | <img src="delete-confirm-popup.png" width="440" alt="Delete Confirmation Popup"><br>**Confirmation Dialog**<br>Shows songs to delete, kept favorites count, and exact space to be freed. |
 
-## Installation
+</div>
+
+<h2 align="center" id="installation">Installation</h2>
 
 ### Method 1: Via Geode In-Game (Recommended)
 1. Open Geometry Dash and click the **Geode** button on the main menu.
@@ -75,7 +98,7 @@ geode build -p windows
 
 The compiled package will be located in `build-win/0xetherpunk.music-cleaner.geode`.
 
-## Project Structure
+<h2 align="center" id="project-structure">Project Structure</h2>
 
 ```
 Music-Cleaner/
@@ -99,6 +122,10 @@ Music-Cleaner/
         └── LevelBrowserLayerHook.cpp  # Saved Levels browser entrypoint button
 ```
 
-## License
+<h2 align="center" id="license">License</h2>
+
+<div align="center">
 
 [MIT License](LICENSE)
+
+</div>
