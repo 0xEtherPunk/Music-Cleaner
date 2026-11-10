@@ -3,7 +3,7 @@
   {
     "geode.node-ids" : ">=v1.23.3"
   },
-  "description" : "Manage and batch delete downloaded custom songs with favorites protection.",
+  "description" : "Batch delete downloaded custom songs with favorites whitelist protection.",
   "developer" : "0xEtherPunk",
   "gd" : 
   {
@@ -33,5 +33,5 @@
       "type" : "bool"
     }
   },
-  "version" : "v0.1.5"
+  "version" : "v0.1.6"
 }

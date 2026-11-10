@@ -17,9 +17,9 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
 
         auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
         if (!infoSpr) {
-            infoSpr = ButtonSprite::create("i", "goldFont.fnt", "GJ_button_02.png", 0.8f);
+            infoSpr = ButtonSprite::create("i", "goldFont.fnt", "GJ_button_02.png", 0.6f);
         } else {
-            infoSpr->setScale(0.7f);
+            infoSpr->setScale(0.55f);
         }
 
         auto infoBtn = CCMenuItemSpriteExtra::create(
@@ -29,9 +29,10 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
         auto menu = CCMenu::create();
-        menu->setID("music-cleaner-header-menu"_spr);
+        menu->setID("music-cleaner-info-menu"_spr);
         menu->setPosition(CCPoint(0.f, 0.f));
-        infoBtn->setPosition(CCPoint(winSize.width / 2.f - 165.f, winSize.height / 2.f + 128.f));
+        // Position directly under the bottom-left corner of the window frame without overlapping
+        infoBtn->setPosition(CCPoint(winSize.width / 2.f - 165.f, winSize.height / 2.f - 140.f));
         menu->addChild(infoBtn);
 
         if (m_mainLayer) {
