@@ -61,13 +61,23 @@ class $modify(MCCustomSongCell, CustomSongCell) {
         float baseDelY = m_fields->m_origDeleteY > -900.f ? m_fields->m_origDeleteY : (deleteBtn ? deleteBtn->getPositionY() : 25.f);
         // Align both deleteBtn and starBtn to the exact same vertical height
         float alignedY = baseDelY + 5.f;
-        float delX = deleteBtn ? deleteBtn->getPositionX() : 320.f;
+
+        // Horizontally align star button directly beneath playbackBtn, and trash button 32px to its left
+        float starX = 0.f;
+        if (widget && widget->m_playbackBtn && widget->m_buttonMenu && menu) {
+            CCPoint playWorld = widget->m_buttonMenu->convertToWorldSpace(widget->m_playbackBtn->getPosition());
+            starX = menu->convertToNodeSpace(playWorld).x;
+        } else if (deleteBtn) {
+            starX = deleteBtn->getPositionX() + 38.f;
+        }
+
+        float delX = starX - 32.f;
 
         if (deleteBtn) {
             deleteBtn->setPosition(CCPoint(delX, alignedY));
         }
 
-        CCPoint starPos = CCPoint(delX + 32.f, alignedY);
+        CCPoint starPos = CCPoint(starX, alignedY);
 
         bool isFav = MusicCleaner::isFavorite(songID);
         const char* starSprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
