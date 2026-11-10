@@ -17,6 +17,17 @@ class $modify(MCCustomSongCell, CustomSongCell) {
         if (!object || object->m_songID <= 0) return;
         int songID = object->m_songID;
 
+        // Hide the redundant "USE" button from CustomSongWidget inside downloaded songs list
+        CustomSongWidget* widget = nullptr;
+        if (m_mainLayer) {
+            widget = m_mainLayer->getChildByType<CustomSongWidget>(0);
+            if (widget && widget->m_selectSongBtn) {
+                widget->m_selectSongBtn->setVisible(false);
+                widget->m_selectSongBtn->setEnabled(false);
+            }
+        }
+
+        // Find CustomSongCell's CCMenu holding the delete button
         CCMenu* menu = nullptr;
         if (m_mainLayer) {
             for (auto child : CCArrayExt<CCNode*>(m_mainLayer->getChildren())) {
@@ -40,23 +51,16 @@ class $modify(MCCustomSongCell, CustomSongCell) {
 
         CCPoint delPos = deleteBtn ? deleteBtn->getPosition() : CCPoint{0.f, 0.f};
 
-        // Determine vertical row offset matching [USE] and [PLAY] buttons
-        float dy = 28.f;
-        if (m_mainLayer) {
-            if (auto widget = m_mainLayer->getChildByType<CustomSongWidget>(0)) {
-                if (widget->m_playbackBtn && widget->m_selectSongBtn) {
-                    float diff = widget->m_playbackBtn->getPositionY() - widget->m_selectSongBtn->getPositionY();
-                    if (diff > 10.f) {
-                        dy = diff;
-                    }
-                }
-            }
+        // Place star button directly in place of the hidden USE button, beside the trash button
+        CCPoint starPos = CCPoint{ delPos.x + 30.f, delPos.y };
+        if (widget && widget->m_selectSongBtn && widget->m_buttonMenu && menu) {
+            CCPoint worldPos = widget->m_buttonMenu->convertToWorldSpace(widget->m_selectSongBtn->getPosition());
+            starPos = menu->convertToNodeSpace(worldPos);
         }
 
         bool isFav = MusicCleaner::isFavorite(songID);
         const char* starSprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
 
-        // Position star button directly above the trash can button
         if (!m_fields->m_starBtn) {
             auto spr = CCSprite::createWithSpriteFrameName(starSprName);
             if (!spr) {
@@ -70,7 +74,7 @@ class $modify(MCCustomSongCell, CustomSongCell) {
                 spr, this, menu_selector(MCCustomSongCell::onStarClicked)
             );
             m_fields->m_starBtn->setID("mc-cell-star-btn"_spr);
-            m_fields->m_starBtn->setPosition({ delPos.x, delPos.y + dy });
+            m_fields->m_starBtn->setPosition(starPos);
             menu->addChild(m_fields->m_starBtn);
         } else {
             m_fields->m_starBtn->setVisible(true);
@@ -79,7 +83,7 @@ class $modify(MCCustomSongCell, CustomSongCell) {
                 spr->setScale(0.5f);
                 m_fields->m_starBtn->setSprite(spr);
             }
-            m_fields->m_starBtn->setPosition({ delPos.x, delPos.y + dy });
+            m_fields->m_starBtn->setPosition(starPos);
         }
     }
 

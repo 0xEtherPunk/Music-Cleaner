@@ -28,6 +28,20 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
         bool isFav = MusicCleaner::isFavorite(m_customSongID);
         const char* sprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
 
+        // Determine target position: slightly left of download or delete button (offset -31px)
+        CCPoint targetPos(140.f, 0.f);
+        if (m_deleteBtn && m_deleteBtn->isVisible()) {
+            targetPos = CCPoint(m_deleteBtn->getPositionX() - 31.f, m_deleteBtn->getPositionY());
+        } else if (m_downloadBtn && m_downloadBtn->isVisible()) {
+            targetPos = CCPoint(m_downloadBtn->getPositionX() - 31.f, m_downloadBtn->getPositionY());
+        } else if (m_deleteBtn) {
+            targetPos = CCPoint(m_deleteBtn->getPositionX() - 31.f, m_deleteBtn->getPositionY());
+        } else if (m_downloadBtn) {
+            targetPos = CCPoint(m_downloadBtn->getPositionX() - 31.f, m_downloadBtn->getPositionY());
+        } else if (m_playbackBtn) {
+            targetPos = CCPoint(m_playbackBtn->getPositionX() + 30.f, m_playbackBtn->getPositionY());
+        }
+
         if (!m_fields->m_starBtn) {
             auto spr = CCSprite::createWithSpriteFrameName(sprName);
             if (!spr) {
@@ -41,16 +55,7 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
                 spr, this, menu_selector(MCCustomSongWidget::onStarClicked)
             );
             m_fields->m_starBtn->setID("music-cleaner-star-btn"_spr);
-
-            if (m_deleteBtn) {
-                auto delPos = m_deleteBtn->getPosition();
-                m_fields->m_starBtn->setPosition({ delPos.x - 26.f, delPos.y });
-            } else if (m_playbackBtn) {
-                auto playPos = m_playbackBtn->getPosition();
-                m_fields->m_starBtn->setPosition({ playPos.x + 30.f, playPos.y });
-            } else {
-                m_fields->m_starBtn->setPosition({ 140.f, 0.f });
-            }
+            m_fields->m_starBtn->setPosition(targetPos);
 
             m_buttonMenu->addChild(m_fields->m_starBtn);
         } else {
@@ -60,6 +65,7 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
                 newSpr->setScale(0.45f);
                 m_fields->m_starBtn->setSprite(newSpr);
             }
+            m_fields->m_starBtn->setPosition(targetPos);
         }
     }
 
