@@ -8,7 +8,28 @@ else()
 endif()
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(MusicCleaner VERSION 0.1.0)
+# Synchronize mod version from git tag
+find_package(Git QUIET)
+if(GIT_FOUND)
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} describe --tags --abbrev=0
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_TAG_VERSION
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+    )
+    if(GIT_TAG_VERSION)
+        file(READ "${CMAKE_CURRENT_SOURCE_DIR}/mod.json" CURRENT_MOD_JSON)
+        string(JSON CURRENT_VER GET "${CURRENT_MOD_JSON}" "version")
+        if(NOT "${CURRENT_VER}" STREQUAL "${GIT_TAG_VERSION}")
+            string(JSON NEW_MOD_JSON SET "${CURRENT_MOD_JSON}" "version" "\"${GIT_TAG_VERSION}\"")
+            file(WRITE "${CMAKE_CURRENT_SOURCE_DIR}/mod.json" "${NEW_MOD_JSON}")
+            message(STATUS "Synchronized mod.json version to git tag: ${GIT_TAG_VERSION}")
+        endif()
+    endif()
+endif()
+
+project(MusicCleaner)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 

@@ -9,6 +9,7 @@ using namespace geode::prelude;
 class $modify(MCCustomSongCell, CustomSongCell) {
     struct Fields {
         CCMenuItemSpriteExtra* m_starBtn = nullptr;
+        float m_origDeleteY = -999.f;
     };
 
     void loadFromObject(SongInfoObject* object) {
@@ -53,10 +54,20 @@ class $modify(MCCustomSongCell, CustomSongCell) {
             }
         }
 
-        CCPoint delPos = deleteBtn ? deleteBtn->getPosition() : CCPoint(0.f, 0.f);
+        if (deleteBtn && m_fields->m_origDeleteY < -900.f) {
+            m_fields->m_origDeleteY = deleteBtn->getPositionY();
+        }
 
-        // Position star button to the right of the trash button, with neat 32px spacing
-        CCPoint starPos = CCPoint(delPos.x + 32.f, delPos.y);
+        float baseDelY = m_fields->m_origDeleteY > -900.f ? m_fields->m_origDeleteY : (deleteBtn ? deleteBtn->getPositionY() : 25.f);
+        // Align both deleteBtn and starBtn to the exact same vertical height
+        float alignedY = baseDelY + 5.f;
+        float delX = deleteBtn ? deleteBtn->getPositionX() : 320.f;
+
+        if (deleteBtn) {
+            deleteBtn->setPosition(CCPoint(delX, alignedY));
+        }
+
+        CCPoint starPos = CCPoint(delX + 32.f, alignedY);
 
         bool isFav = MusicCleaner::isFavorite(songID);
         const char* starSprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
