@@ -1,7 +1,7 @@
 #include <Geode/Geode.hpp>
 #include <Geode/modify/CustomSongCell.hpp>
 #include <Geode/binding/SongInfoObject.hpp>
-#include <Geode/binding/CCMenuItemToggler.hpp>
+#include <Geode/binding/CustomSongWidget.hpp>
 #include "../MusicCleaner.hpp"
 
 using namespace geode::prelude;
@@ -9,7 +9,6 @@ using namespace geode::prelude;
 class $modify(MCCustomSongCell, CustomSongCell) {
     struct Fields {
         CCMenuItemSpriteExtra* m_starBtn = nullptr;
-        CCMenuItemToggler* m_selectToggler = nullptr;
     };
 
     void loadFromObject(SongInfoObject* object) {
@@ -39,12 +38,25 @@ class $modify(MCCustomSongCell, CustomSongCell) {
             }
         }
 
-        CCPoint basePos = deleteBtn ? deleteBtn->getPosition() : CCPoint{0.f, 0.f};
+        CCPoint delPos = deleteBtn ? deleteBtn->getPosition() : CCPoint{0.f, 0.f};
+
+        // Determine vertical row offset matching [USE] and [PLAY] buttons
+        float dy = 28.f;
+        if (m_mainLayer) {
+            if (auto widget = m_mainLayer->getChildByType<CustomSongWidget>(0)) {
+                if (widget->m_playbackBtn && widget->m_selectSongBtn) {
+                    float diff = widget->m_playbackBtn->getPositionY() - widget->m_selectSongBtn->getPositionY();
+                    if (diff > 10.f) {
+                        dy = diff;
+                    }
+                }
+            }
+        }
 
         bool isFav = MusicCleaner::isFavorite(songID);
         const char* starSprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
 
-        // Star button (favorites whitelist)
+        // Position star button directly above the trash can button
         if (!m_fields->m_starBtn) {
             auto spr = CCSprite::createWithSpriteFrameName(starSprName);
             if (!spr) {
@@ -58,7 +70,7 @@ class $modify(MCCustomSongCell, CustomSongCell) {
                 spr, this, menu_selector(MCCustomSongCell::onStarClicked)
             );
             m_fields->m_starBtn->setID("mc-cell-star-btn"_spr);
-            m_fields->m_starBtn->setPosition({ basePos.x - 28.f, basePos.y });
+            m_fields->m_starBtn->setPosition({ delPos.x, delPos.y + dy });
             menu->addChild(m_fields->m_starBtn);
         } else {
             m_fields->m_starBtn->setVisible(true);
@@ -67,27 +79,7 @@ class $modify(MCCustomSongCell, CustomSongCell) {
                 spr->setScale(0.5f);
                 m_fields->m_starBtn->setSprite(spr);
             }
-            m_fields->m_starBtn->setPosition({ basePos.x - 28.f, basePos.y });
-        }
-
-        // Checkbox toggler (selective deletion)
-        if (!m_fields->m_selectToggler) {
-            m_fields->m_selectToggler = CCMenuItemToggler::createWithStandardSprites(
-                this, menu_selector(MCCustomSongCell::onToggleSelected), 0.55f
-            );
-            m_fields->m_selectToggler->setID("mc-cell-select-toggler"_spr);
-            m_fields->m_selectToggler->setPosition({ basePos.x - 58.f, basePos.y });
-            menu->addChild(m_fields->m_selectToggler);
-        } else {
-            m_fields->m_selectToggler->setVisible(true);
-            m_fields->m_selectToggler->setPosition({ basePos.x - 58.f, basePos.y });
-        }
-
-        if (isFav) {
-            MusicCleaner::setSelected(songID, false);
-            m_fields->m_selectToggler->toggle(false);
-        } else {
-            m_fields->m_selectToggler->toggle(MusicCleaner::isSelected(songID));
+            m_fields->m_starBtn->setPosition({ delPos.x, delPos.y + dy });
         }
     }
 
@@ -105,36 +97,6 @@ class $modify(MCCustomSongCell, CustomSongCell) {
                 m_fields->m_starBtn->setSprite(spr);
             }
         }
-
-        if (isFav) {
-            MusicCleaner::setSelected(songID, false);
-            if (m_fields->m_selectToggler) {
-                m_fields->m_selectToggler->toggle(false);
-            }
-        }
-    }
-
-    void onToggleSelected(CCObject* sender) {
-        if (!m_songInfoObject || m_songInfoObject->m_songID <= 0) return;
-        int songID = m_songInfoObject->m_songID;
-
-        auto toggler = static_cast<CCMenuItemToggler*>(sender);
-
-        if (MusicCleaner::isFavorite(songID)) {
-            toggler->toggle(false);
-            MusicCleaner::setSelected(songID, false);
-            FLAlertLayer::create(
-                "Protected Song",
-                "This song is marked as a <cy>Favorite</c>.\n"
-                "Unstar it before selecting for deletion.",
-                "OK"
-            )->show();
-            return;
-        }
-
-        bool newState = !MusicCleaner::isSelected(songID);
-        MusicCleaner::setSelected(songID, newState);
-        toggler->toggle(newState);
     }
 
     void onDelete(CCObject* sender) {

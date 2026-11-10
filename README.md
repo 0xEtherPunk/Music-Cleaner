@@ -1,6 +1,6 @@
 # Music Cleaner
 
-A utility mod for Geometry Dash (Geode SDK) designed to manage local song cache storage and provide selective or batch deletion with whitelist protection.
+A utility mod for Geometry Dash (Geode SDK) designed to manage local song cache storage and provide batch deletion with whitelist protection.
 
 ## Overview
 
@@ -8,32 +8,31 @@ Geometry Dash stores downloaded Newgrounds and Music Library audio assets locall
 
 **Music Cleaner** addresses this limitation by introducing:
 1. A favorites whitelist system to protect selected tracks from deletion.
-2. Checkbox selection on each song entry for selective batch removal.
-3. Smart batch deletion: purging either selected tracks or all unstarred tracks.
-4. Quick access button in the Saved Levels browser opening the custom songs browser.
+2. Direct batch deletion purging all unstarred custom audio files in a single action.
+3. Quick access button in the Saved Levels browser opening the custom songs browser.
+4. Built-in info dialog explaining features and developer credits.
 
 ## Features
 
 - **Whitelist Protection:** Star songs to mark them as favorites. Favorited songs are stored in persistent mod storage and excluded from deletion routines.
-- **Selective & Batch Deletion:**
-  - When $\ge 1$ checkboxes are selected: clicking the delete-all button purges only the marked tracks (excluding favorites).
-  - When 0 checkboxes are selected: clicking the delete-all button purges all downloaded custom tracks except favorites.
+- **Batch Deletion:** Removes all downloaded custom songs except those marked as favorites.
 - **Accidental Deletion Safeguards:** Favorited songs cannot be deleted via the row trash button or batch delete unless first unstarred.
 - **Disk Space Calculation:** Queries filesystem metrics to report exact file counts and reclaimed disk space prior to execution.
 - **Two-Step Confirmation:** Native alert dialogs displaying file counts and freed storage before proceeding with file deletion.
 - **Seamless UI Integration:**
-  - Row controls: Checkbox, Star button, and Trash button arranged side-by-side.
+  - Row controls: Star toggle button positioned directly above the trash can button, keeping file size labels unobstructed.
   - Level view: Compact star toggle on the level song widget.
   - Navigation: Quick-access button in the Saved Levels browser.
+  - Help: Info button located in the top-left corner of the custom songs browser.
 
 ## Interface Integration
 
 The mod integrates directly into standard game layers:
-- **Saved Levels Browser (`LevelBrowserLayer`):** Music icon button adjacent to the folder navigation controls, opening the custom songs browser (`GJSongBrowser`).
+- **Saved Levels Browser (`LevelBrowserLayer`):** Music icon button adjacent to folder navigation, opening the custom songs browser (`GJSongBrowser`).
 - **Custom Song Browser (`GJSongBrowser` & `CustomSongCell`):**
-  - Left of each row's trash button: favorite star toggle (`GJ_starBtn_001.png` / `GJ_starBtn2_001.png`).
-  - Left of the star toggle: multi-select checkbox (`GJ_checkOn_001.png` / `GJ_checkOff_001.png`).
-  - Header delete-all button: initiates smart deletion based on active checkbox state.
+  - Above each row's trash button: favorite star toggle (`GJ_starBtn_001.png` / `GJ_starBtn2_001.png`).
+  - Top-left corner of the browser dialog: info button (`GJ_infoBtn_001.png`) displaying usage guidelines and credits.
+  - Delete-all button: initiates batch deletion of all non-favorited tracks with space calculation.
 - **Song Widget (`CustomSongWidget`):** Compact star toggle button placed beside playback controls on level overview pages.
 
 ## Project Structure
@@ -52,9 +51,9 @@ Music-Cleaner/
     ├── MusicCleaner.hpp           # Core storage and calculation logic
     ├── MusicCleaner.cpp
     └── hooks/
-        ├── CustomSongCellHook.cpp     # Track row checkbox and star controls
+        ├── CustomSongCellHook.cpp     # Track row star button above trash button
         ├── CustomSongWidgetHook.cpp   # Level view compact star toggle
-        ├── GJSongBrowserHook.cpp      # Smart batch deletion logic
+        ├── GJSongBrowserHook.cpp      # Batch deletion and info button
         └── LevelBrowserLayerHook.cpp  # Saved levels browser entrypoint
 ```
 

@@ -2,7 +2,6 @@
 #include <Geode/modify/LevelBrowserLayer.hpp>
 #include <Geode/binding/GJSongBrowser.hpp>
 #include <Geode/binding/GJSearchObject.hpp>
-#include "../MusicCleaner.hpp"
 
 using namespace geode::prelude;
 
@@ -50,7 +49,6 @@ class $modify(MCLevelBrowserLayer, LevelBrowserLayer) {
     }
 
     void onOpenMusicList(CCObject* sender) {
-        MusicCleaner::clearSelection();
         auto browser = GJSongBrowser::create();
         if (browser) {
             auto scene = CCDirector::sharedDirector()->getRunningScene();

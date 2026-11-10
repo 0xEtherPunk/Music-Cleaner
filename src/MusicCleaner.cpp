@@ -8,7 +8,6 @@
 using namespace geode::prelude;
 
 std::unordered_set<int> MusicCleaner::s_favorites;
-std::unordered_set<int> MusicCleaner::s_selected;
 bool MusicCleaner::s_loaded = false;
 
 static std::filesystem::path toPath(const gd::string& str) {
@@ -48,7 +47,6 @@ void MusicCleaner::setFavorite(int songID, bool favorite) {
     init();
     if (favorite) {
         s_favorites.insert(songID);
-        s_selected.erase(songID);
     } else {
         s_favorites.erase(songID);
     }
@@ -70,42 +68,6 @@ const std::unordered_set<int>& MusicCleaner::getFavorites() {
 size_t MusicCleaner::getFavoritesCount() {
     init();
     return s_favorites.size();
-}
-
-bool MusicCleaner::isSelected(int songID) {
-    return s_selected.contains(songID);
-}
-
-void MusicCleaner::setSelected(int songID, bool selected) {
-    if (selected) {
-        if (!isFavorite(songID)) {
-            s_selected.insert(songID);
-        }
-    } else {
-        s_selected.erase(songID);
-    }
-}
-
-bool MusicCleaner::toggleSelected(int songID) {
-    if (isFavorite(songID)) {
-        s_selected.erase(songID);
-        return false;
-    }
-    bool newState = !isSelected(songID);
-    setSelected(songID, newState);
-    return newState;
-}
-
-void MusicCleaner::clearSelection() {
-    s_selected.clear();
-}
-
-size_t MusicCleaner::getSelectedCount() {
-    return s_selected.size();
-}
-
-const std::unordered_set<int>& MusicCleaner::getSelected() {
-    return s_selected;
 }
 
 uintmax_t MusicCleaner::getSongFileSize(int songID) {
@@ -142,7 +104,6 @@ bool MusicCleaner::deleteSingleSong(int songID, uintmax_t* outFreedBytes) {
     }
 
     mdm->clearSong(songID);
-    s_selected.erase(songID);
     return true;
 }
 
@@ -166,19 +127,6 @@ size_t MusicCleaner::deleteSongs(const std::vector<int>& songIDs, uintmax_t* out
     return count;
 }
 
-size_t MusicCleaner::deleteSelectedSongs(uintmax_t* outFreedBytes) {
-    std::vector<int> toDelete;
-    toDelete.reserve(s_selected.size());
-    for (int id : s_selected) {
-        if (!isFavorite(id)) {
-            toDelete.push_back(id);
-        }
-    }
-    size_t count = deleteSongs(toDelete, outFreedBytes);
-    s_selected.clear();
-    return count;
-}
-
 size_t MusicCleaner::deleteAllUnstarredSongs(uintmax_t* outFreedBytes) {
     auto mdm = MusicDownloadManager::sharedState();
     if (!mdm) return 0;
@@ -196,7 +144,6 @@ size_t MusicCleaner::deleteAllUnstarredSongs(uintmax_t* outFreedBytes) {
     }
 
     size_t count = deleteSongs(toDelete, outFreedBytes);
-    s_selected.clear();
     return count;
 }
 
