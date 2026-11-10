@@ -44,3 +44,10 @@ endif()
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
 setup_geode_mod(${PROJECT_NAME})
+
+add_custom_command(
+    TARGET ${PROJECT_NAME}_PACKAGE POST_BUILD
+    COMMAND python3 ${CMAKE_CURRENT_SOURCE_DIR}/scripts/bundle_assets.py
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    COMMENT "Adding screenshot assets to .geode package"
+)
