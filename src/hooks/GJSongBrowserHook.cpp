@@ -6,6 +6,7 @@
 #include <Geode/binding/MusicDownloadManager.hpp>
 #include <Geode/binding/SongInfoObject.hpp>
 #include <Geode/binding/FMODAudioEngine.hpp>
+#include <Geode/binding/GameManager.hpp>
 #include "../MusicCleaner.hpp"
 #include <cctype>
 #include <algorithm>
@@ -119,9 +120,15 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
         // Save original downloaded songs array
         m_fields->m_allSongs = this->m_downloadedSongs;
 
-        // Info button in top-left corner of the dialog frame
+        // Ensure sprite sheets are loaded
+        CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("GJ_GameSheet03.plist");
+        CCSpriteFrameCache::sharedSpriteFrameCache()->addSpriteFramesWithFile("GJ_GameSheet02.plist");
+
+        // Info button in top header of the dialog frame
         auto infoSpr = CCSprite::createWithSpriteFrameName("GJ_infoBtn_001.png");
-        if (infoSpr) {
+        if (!infoSpr) {
+            infoSpr = ButtonSprite::create("i", "goldFont.fnt", "GJ_button_02.png", 0.8f);
+        } else {
             infoSpr->setScale(0.75f);
         }
 
@@ -135,7 +142,9 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
         if (!searchSpr) {
             searchSpr = CCSprite::createWithSpriteFrameName("GJ_searchBtn_001.png");
         }
-        if (searchSpr) {
+        if (!searchSpr) {
+            searchSpr = ButtonSprite::create("Q", "goldFont.fnt", "GJ_button_01.png", 0.8f);
+        } else {
             searchSpr->setScale(0.75f);
         }
 
@@ -145,12 +154,16 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
         m_fields->m_searchBtn->setID("music-cleaner-search-btn"_spr);
 
         auto winSize = CCDirector::sharedDirector()->getWinSize();
-        infoBtn->setPosition({ winSize.width / 2.f - 170.f, winSize.height / 2.f + 128.f });
-        m_fields->m_searchBtn->setPosition({ winSize.width / 2.f - 140.f, winSize.height / 2.f + 128.f });
-
+        CCPoint centerOffset = CCPoint(0.f, 0.f);
         if (m_buttonMenu) {
-            m_buttonMenu->addChild(infoBtn);
-            m_buttonMenu->addChild(m_fields->m_searchBtn);
+            if (m_buttonMenu->getPositionX() < 10.f && m_buttonMenu->getPositionY() < 10.f) {
+                centerOffset = CCPoint(winSize.width / 2.f, winSize.height / 2.f);
+            }
+            infoBtn->setPosition(CCPoint(centerOffset.x - 165.f, centerOffset.y + 130.f));
+            m_fields->m_searchBtn->setPosition(CCPoint(centerOffset.x - 135.f, centerOffset.y + 130.f));
+
+            m_buttonMenu->addChild(infoBtn, 100);
+            m_buttonMenu->addChild(m_fields->m_searchBtn, 100);
         }
     }
 
@@ -303,5 +316,6 @@ class $modify(MCGJSongBrowser, GJSongBrowser) {
         m_fields->m_allSongs = nullptr;
         m_fields->m_searchQuery = "";
         GJSongBrowser::exitLayer(sender);
+        GameManager::sharedState()->fadeInMenuMusic();
     }
 };

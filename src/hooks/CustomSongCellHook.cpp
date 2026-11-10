@@ -17,13 +17,17 @@ class $modify(MCCustomSongCell, CustomSongCell) {
         if (!object || object->m_songID <= 0) return;
         int songID = object->m_songID;
 
-        // Hide the redundant "USE" button from CustomSongWidget inside downloaded songs list
+        // Hide and move away the redundant "USE" button from CustomSongWidget inside downloaded songs list
         CustomSongWidget* widget = nullptr;
         if (m_mainLayer) {
             widget = m_mainLayer->getChildByType<CustomSongWidget>(0);
-            if (widget && widget->m_selectSongBtn) {
-                widget->m_selectSongBtn->setVisible(false);
-                widget->m_selectSongBtn->setEnabled(false);
+            if (widget) {
+                widget->m_showSelectSongBtn = false;
+                if (widget->m_selectSongBtn) {
+                    widget->m_selectSongBtn->setVisible(false);
+                    widget->m_selectSongBtn->setEnabled(false);
+                    widget->m_selectSongBtn->setPosition(CCPoint(-9999.f, -9999.f));
+                }
             }
         }
 
@@ -49,14 +53,10 @@ class $modify(MCCustomSongCell, CustomSongCell) {
             }
         }
 
-        CCPoint delPos = deleteBtn ? deleteBtn->getPosition() : CCPoint{0.f, 0.f};
+        CCPoint delPos = deleteBtn ? deleteBtn->getPosition() : CCPoint(0.f, 0.f);
 
-        // Place star button directly in place of the hidden USE button, beside the trash button
-        CCPoint starPos = CCPoint{ delPos.x + 30.f, delPos.y };
-        if (widget && widget->m_selectSongBtn && widget->m_buttonMenu && menu) {
-            CCPoint worldPos = widget->m_buttonMenu->convertToWorldSpace(widget->m_selectSongBtn->getPosition());
-            starPos = menu->convertToNodeSpace(worldPos);
-        }
+        // Position star button to the right of the trash button, with neat 32px spacing
+        CCPoint starPos = CCPoint(delPos.x + 32.f, delPos.y);
 
         bool isFav = MusicCleaner::isFavorite(songID);
         const char* starSprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";

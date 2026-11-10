@@ -10,13 +10,20 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
     };
 
     void updateSongInfo() {
-        CustomSongWidget::updateSongInfo();
-
-        // CustomSongWidget is also used inside CustomSongCell where m_songDelegate is set.
+        // CustomSongWidget is also used inside CustomSongCell where m_songDelegate or m_isInCell is set.
         // Cell layout is handled independently by CustomSongCellHook.
-        if (m_songDelegate != nullptr) {
+        if (m_songDelegate != nullptr || m_isInCell) {
+            m_showSelectSongBtn = false;
+            CustomSongWidget::updateSongInfo();
+            if (m_selectSongBtn) {
+                m_selectSongBtn->setVisible(false);
+                m_selectSongBtn->setEnabled(false);
+                m_selectSongBtn->setPosition(CCPoint(-9999.f, -9999.f));
+            }
             return;
         }
+
+        CustomSongWidget::updateSongInfo();
 
         if (m_customSongID <= 0 || m_isRobtopSong || !m_buttonMenu) {
             if (m_fields->m_starBtn) {
@@ -28,16 +35,16 @@ class $modify(MCCustomSongWidget, CustomSongWidget) {
         bool isFav = MusicCleaner::isFavorite(m_customSongID);
         const char* sprName = isFav ? "GJ_starBtn_001.png" : "GJ_starBtn2_001.png";
 
-        // Determine target position: slightly left of download or delete button (offset -31px)
+        // Determine target position: slightly left of download or delete button (offset -33px)
         CCPoint targetPos(140.f, 0.f);
         if (m_deleteBtn && m_deleteBtn->isVisible()) {
-            targetPos = CCPoint(m_deleteBtn->getPositionX() - 31.f, m_deleteBtn->getPositionY());
+            targetPos = CCPoint(m_deleteBtn->getPositionX() - 33.f, m_deleteBtn->getPositionY());
         } else if (m_downloadBtn && m_downloadBtn->isVisible()) {
-            targetPos = CCPoint(m_downloadBtn->getPositionX() - 31.f, m_downloadBtn->getPositionY());
+            targetPos = CCPoint(m_downloadBtn->getPositionX() - 33.f, m_downloadBtn->getPositionY());
         } else if (m_deleteBtn) {
-            targetPos = CCPoint(m_deleteBtn->getPositionX() - 31.f, m_deleteBtn->getPositionY());
+            targetPos = CCPoint(m_deleteBtn->getPositionX() - 33.f, m_deleteBtn->getPositionY());
         } else if (m_downloadBtn) {
-            targetPos = CCPoint(m_downloadBtn->getPositionX() - 31.f, m_downloadBtn->getPositionY());
+            targetPos = CCPoint(m_downloadBtn->getPositionX() - 33.f, m_downloadBtn->getPositionY());
         } else if (m_playbackBtn) {
             targetPos = CCPoint(m_playbackBtn->getPositionX() + 30.f, m_playbackBtn->getPositionY());
         }
