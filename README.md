@@ -4,11 +4,7 @@
 
 <p align="center">
   <a href="#how-to-use">How to Use</a> &nbsp;•&nbsp;
-  <a href="#interface-integration">Interface Integration</a> &nbsp;•&nbsp;
-  <a href="#in-game-dialogs">In-Game Dialogs</a> &nbsp;•&nbsp;
-  <a href="#installation">Installation</a> &nbsp;•&nbsp;
-  <a href="#project-structure">Project Structure</a> &nbsp;•&nbsp;
-  <a href="#license">License</a>
+  <a href="#installation">Installation</a>
 </p>
 
 | Mod Icon | Quick Access Button |
