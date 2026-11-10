@@ -54,6 +54,27 @@
 |:---:|:---:|
 | <img src="info-popup.png" width="340" alt="Info Popup"><br>**Info & Credits Dialog**<br>Accessible via the `(i)` button below the song browser frame. | <img src="delete-confirm-popup.png" width="440" alt="Delete Confirmation Popup"><br>**Confirmation Dialog**<br>Shows songs to delete, kept favorites count, and exact space to be freed. |
 
+## Installation
+
+### Method 1: Via Geode In-Game (Recommended)
+1. Open Geometry Dash and click the **Geode** button on the main menu.
+2. Go to the **Download** tab and search for `Music Cleaner`.
+3. Click **View** and then **Install**.
+
+### Method 2: Manual Download (GitHub Releases)
+1. Download the latest `.geode` package from [Releases](https://github.com/0xEtherPunk/Music-Cleaner/releases).
+2. Place the downloaded file into your Geometry Dash `geode/mods/` folder.
+3. Restart Geometry Dash.
+
+### Method 3: Build from Source
+**Requirements:** Geode CLI (`4.0.0+`), CMake (`3.25+`), Clang 19+, Geode SDK (`5.11.2+`).
+
+```bash
+geode build -p windows
+```
+
+The compiled package will be located in `build-win/0xetherpunk.music-cleaner.geode`.
+
 ## Project Structure
 
 ```
@@ -76,27 +97,6 @@ Music-Cleaner/
         ├── CustomSongWidgetHook.cpp   # Level view compact star toggle and USE button suppression
         ├── GJSongBrowserHook.cpp      # Batch deletion, info button, and menu music restoration
         └── LevelBrowserLayerHook.cpp  # Saved Levels browser entrypoint button
-```
-
-## Building
-
-### Requirements
-- Geode CLI (`geode-cli 4.0.0+`)
-- CMake 3.25+
-- Clang 19+ (or platform toolchain)
-- Geode SDK v5.11.2+
-
-### Compilation
-```bash
-geode build -p windows
-```
-
-The build system automatically synchronizes `mod.json` version metadata with the latest Git tag (`git describe --tags --abbrev=0`).
-
-### Installation
-Copy the compiled `.geode` package into your Geometry Dash `geode/mods/` directory:
-```bash
-cp build-win/0xetherpunk.music-cleaner.geode "$STEAM_GD/geode/mods/"
 ```
 
 ## License
