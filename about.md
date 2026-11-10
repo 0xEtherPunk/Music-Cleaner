@@ -16,7 +16,7 @@ Batch delete downloaded custom songs to free disk space while keeping your favor
 
 ![Saved Levels Button](0xetherpunk.music-cleaner/saved-levels-btn.png?width=120)
 
-*Quick access button in Saved Levels.*
+*Located in Saved Levels.*
 
 ![Downloaded Songs Browser](0xetherpunk.music-cleaner/song-browser.png?width=280)
 
@@ -32,4 +32,4 @@ Batch delete downloaded custom songs to free disk space while keeping your favor
 
 ## License
 
-Licensed under the [MIT License](LICENSE).
+[MIT License](LICENSE)

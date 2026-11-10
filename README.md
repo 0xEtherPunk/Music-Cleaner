@@ -2,7 +2,7 @@
 
 | Mod Icon | Quick Access Button |
 |:---:|:---:|
-| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner** | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Located in Saved Levels**<br>Next to the folders button |
+| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner** | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Located in Saved Levels** |
 
 ### Downloaded Songs Interface
 
@@ -101,4 +101,4 @@ cp build-win/0xetherpunk.music-cleaner.geode "$STEAM_GD/geode/mods/"
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+[MIT License](LICENSE)
