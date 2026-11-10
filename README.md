@@ -1,8 +1,8 @@
 # Music Cleaner
 
-| Mod Icon | Saved Levels Access |
+| Mod Icon | Quick Access Button |
 |:---:|:---:|
-| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner**<br>Batch cleaner & favorites whitelist | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Quick Access Button**<br>Located in Saved Levels next to folders |
+| <img src="logo.png" width="160" alt="Music Cleaner Logo"><br>**Music Cleaner** | <img src="saved-levels-btn.png" width="160" alt="Saved Levels Button"><br>**Located in Saved Levels**<br>Next to the folders button |
 
 ### Downloaded Songs Interface
 

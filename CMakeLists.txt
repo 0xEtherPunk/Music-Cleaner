@@ -43,7 +43,7 @@ endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
 
-setup_geode_mod(${PROJECT_NAME})
+setup_geode_mod(${PROJECT_NAME} DONT_INSTALL)
 
 add_custom_command(
     TARGET ${PROJECT_NAME}_PACKAGE POST_BUILD
